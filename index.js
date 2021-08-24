@@ -1,13 +1,35 @@
 const express = require('express');
 const app = express();
-const url = "https://rest-api-vanguarda-messaging.herokuapp.com/"
+const path = require('path')
 app.use(express.json())
+
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.get('/file/:name', function (req, res, next) {
+    var options = {
+      root: path.join(__dirname, 'public/images'),
+      dotfiles: 'deny',
+      headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true
+      }
+    }
+  
+    var fileName = req.params.name
+    res.sendFile(fileName, options, function (err) {
+      if (err) {
+        next(err)
+      } else {
+        console.log('Sent:', fileName)
+      }
+    })
+  })
 
 app.get('/signs', (req, res) => {
     res.status(200).send(
         [{
                 letter: "A",
-                url: `${url}img/A-libras.png`
+                url: `A-libras.png`
             },
             {
                 letter: "B",
