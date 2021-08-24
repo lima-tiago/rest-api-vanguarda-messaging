@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
-
+const url = "https://rest-api-vanguarda-messaging.herokuapp.com/"
 app.use(express.json())
 
 app.get('/signs', (req, res) => {
     res.status(200).send(
         [{
                 letter: "A",
-                url: ""
+                url: `${url}img/A-libras.png`
             },
             {
                 letter: "B",
