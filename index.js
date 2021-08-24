@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const PORT = 8080;
 
 app.use(express.json())
 
@@ -31,6 +30,6 @@ app.post('/tshirt/:id', (req, res) => {
 });
 
 app.listen(
-    PORT,
-    () => console.log(`it's aline on http://localhost:${PORT}`)
+    process.env.PORT || 5000,
+    () => console.log(`it's aline on http://localhost:5000`)
 )
