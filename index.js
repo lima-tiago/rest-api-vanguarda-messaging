@@ -1,9 +1,13 @@
 const express = require('express');
+const fstat = require('fs');
 const app = express();
 const path = require('path')
 app.use(express.json())
-
+app.use(express.urlencoded({extended: false}))
 app.use(express.static(path.join(__dirname, 'public')))
+
+const base_url = "https://rest-api-vanguarda-messaging.herokuapp.com/file/"
+
 
 app.get('/file/:name', function (req, res, next) {
     var options = {
@@ -26,7 +30,6 @@ app.get('/file/:name', function (req, res, next) {
 })
 
 app.get('/signs', (req, res) => {
-    const base_url = "https://rest-api-vanguarda-messaging.herokuapp.com/file/"
     res.status(200).send({
         results: [{
                 letter: "A",
@@ -34,110 +37,162 @@ app.get('/signs', (req, res) => {
             },
             {
                 letter: "B",
-                url: ""
+                url: `${base_url}B-libras.png`
             },
             {
                 letter: "C",
-                url: ""
+                url: `${base_url}C-libras.png`
+            },
+            {
+                letter: "Ç",
+                url: `${base_url}Ç-libras.png`
             },
             {
                 letter: "D",
-                url: ""
+                url: `${base_url}D-libras.png`
             },
             {
                 letter: "E",
-                url: ""
+                url: `${base_url}E-libras.png`
             },
             {
                 letter: "F",
-                url: ""
+                url: `${base_url}F-libras.png`
             },
             {
                 letter: "G",
-                url: ""
+                url: `${base_url}G-libras.png`
             },
             {
                 letter: "H",
-                url: ""
+                url: `${base_url}H-libras.png`
             },
             {
                 letter: "I",
-                url: ""
+                url: `${base_url}I-libras.png`
             },
             {
                 letter: "J",
-                url: ""
+                url: `${base_url}J-libras.png`
             },
             {
                 letter: "K",
-                url: ""
+                url: `${base_url}K-libras.png`
             },
             {
                 letter: "L",
-                url: ""
+                url: `${base_url}L-libras.png`
             },
             {
                 letter: "M",
-                url: ""
+                url: `${base_url}M-libras.png`
             },
             {
                 letter: "N",
-                url: ""
+                url: `${base_url}N-libras.png`
             },
             {
                 letter: "O",
-                url: ""
+                url: `${base_url}O-libras.png`
             },
             {
                 letter: "P",
-                url: ""
+                url: `${base_url}P-libras.png`
             },
             {
                 letter: "Q",
-                url: ""
+                url: `${base_url}Q-libras.png`
             },
             {
                 letter: "R",
-                url: ""
+                url: `${base_url}R-libras.png`
             },
             {
                 letter: "S",
-                url: ""
+                url: `${base_url}S-libras.png`
             },
             {
                 letter: "T",
-                url: ""
+                url: `${base_url}T-libras.png`
             },
             {
                 letter: "U",
-                url: ""
+                url: `${base_url}U-libras.png`
             },
             {
                 letter: "V",
-                url: ""
+                url: `${base_url}V-libras.png`
             },
             {
                 letter: "W",
-                url: ""
+                url: `${base_url}W-libras.png`
             },
             {
                 letter: "X",
-                url: ""
+                url: `${base_url}X-libras.png`
             },
             {
                 letter: "Y",
-                url: ""
+                url: `${base_url}Y-libras.png`
             },
             {
                 letter: "Z",
-                url: ""
+                url: `${base_url}Z-libras.png`
             }
         ]
     })
 });
 
-app.post('/signs', (req, res) => {
+app.post('/translate', (req, res) => {
+    console.log(`req.body=${req.body.phrase}`)
+    const phrase = req.body.phrase
+    const newPhrase = retira_acentos(phrase).toUpperCase()
+    const letters = []
+    console.log(`phrase=${phrase}`)
+    console.log(`newPhrase=${newPhrase}`)
+    for (let i = 0; i < newPhrase.length; i++) {
+        letters[i] = newPhrase[i];
+    }
 
+    console.log(letters)
+
+    function retira_acentos(str) {
+        com_acento = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝŔÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŕ";
+        sem_acento = "AAAAAAACEEEEIIIIDNOOOOOOUUUUYRsBaaaaaaaceeeeiiiionoooooouuuuybyr";
+        novastr = "";
+        for (i = 0; i < str.length; i++) {
+            troca = false;
+            for (a = 0; a < com_acento.length; a++) {
+                if (str.substr(i, 1) == com_acento.substr(a, 1)) {
+                    novastr += sem_acento.substr(a, 1);
+                    troca = true;
+                    break;
+                }
+            }
+            if (troca == false) {
+                novastr += str.substr(i, 1);
+            }
+        }
+        return novastr;
+    }
+    const images = []
+    console.log(`letters.lenght=${letters.length}`)
+    for (let i = 0; i < letters.length; i++) {
+        if(letters[i]!=" "){
+            images[i] ={
+                letter: letters[i],
+                url: `${base_url}${letters[i]}-libras.png`
+            } 
+        } else {
+            images[i] ={
+                letter: "",
+                url: ""
+            } 
+        }
+    }
+    res.status(201).send({
+        images
+    })
 })
 
 app.get('/tshirt', (req, res) => {
