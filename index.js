@@ -26,10 +26,11 @@ app.get('/file/:name', function (req, res, next) {
 })
 
 app.get('/signs', (req, res) => {
+    const base_url = "https://rest-api-vanguarda-messaging.herokuapp.com/"
     res.status(200).send({
         results: [{
                 letter: "A",
-                url: "http://localhost:5000/file/A-libras.png"
+                url: `${base_url}A-libras.png`
             },
             {
                 letter: "B",
