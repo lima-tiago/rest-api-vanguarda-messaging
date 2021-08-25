@@ -7,29 +7,29 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/file/:name', function (req, res, next) {
     var options = {
-      root: path.join(__dirname, 'public/images'),
-      dotfiles: 'deny',
-      headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true
-      }
+        root: path.join(__dirname, 'public/images'),
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
     }
-  
+
     var fileName = req.params.name
     res.sendFile(fileName, options, function (err) {
-      if (err) {
-        next(err)
-      } else {
-        console.log('Sent:', fileName)
-      }
+        if (err) {
+            next(err)
+        } else {
+            console.log('Sent:', fileName)
+        }
     })
-  })
+})
 
 app.get('/signs', (req, res) => {
-    res.status(200).send(
-        [{
+    res.status(200).send({
+        results: [{
                 letter: "A",
-                url: `A-libras.png`
+                url: "http://localhost:5000/file/A-libras.png"
             },
             {
                 letter: "B",
@@ -132,7 +132,7 @@ app.get('/signs', (req, res) => {
                 url: ""
             }
         ]
-    )
+    })
 });
 
 app.post('/signs', (req, res) => {
