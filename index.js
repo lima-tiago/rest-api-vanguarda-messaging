@@ -3,7 +3,9 @@ const fstat = require('fs');
 const app = express();
 const path = require('path')
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({
+    extended: false
+}))
 app.use(express.static(path.join(__dirname, 'public')))
 
 const base_url = "https://rest-api-vanguarda-messaging.herokuapp.com/file/"
@@ -144,17 +146,25 @@ app.get('/signs', (req, res) => {
 });
 
 app.post('/translate', (req, res) => {
-    console.log(`req.body=${req.body.phrase}`)
     const phrase = req.body.phrase
     const newPhrase = retira_acentos(phrase).toUpperCase()
-    const letters = []
-    console.log(`phrase=${phrase}`)
-    console.log(`newPhrase=${newPhrase}`)
-    for (let i = 0; i < newPhrase.length; i++) {
-        letters[i] = newPhrase[i];
+    const words = newPhrase.split(" ")
+    const nWords = []
+
+    // console.log(`phrase=${phrase}`)
+    console.log(`words=${words},${words.length}`)
+    // console.log(`newPhrase=${newPhrase}`)
+    // console.log(words)
+    for (let j = 0; j < words.length; j++) {
+        const splitWord = []
+        const word = words[j]
+        for (let i = 0; i < word.length; i++) {
+            splitWord[i] = word[i]
+        }
+        nWords.push(splitWord)
     }
 
-    console.log(letters)
+    console.log(`nWords[0]=${nWords[0]}`)
 
     function retira_acentos(str) {
         com_acento = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝŔÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŕ";
@@ -175,23 +185,23 @@ app.post('/translate', (req, res) => {
         }
         return novastr;
     }
-    const images = []
-    console.log(`letters.lenght=${letters.length}`)
-    for (let i = 0; i < letters.length; i++) {
-        if(letters[i]!=" "){
-            images[i] ={
-                letter: letters[i],
-                url: `${base_url}${letters[i]}-libras.png`
-            } 
-        } else {
-            images[i] ={
-                letter: "",
-                url: ""
-            } 
+    const results = []
+    // console.log(`letters.lenght=${letters.length}`)
+    for (let i = 0; i < nWords.length; i++) {
+        const images = []
+        const splitWord = nWords[i]
+        console.log(`splitWord=${splitWord}`)
+
+        for (let j = 0; j < splitWord.length; j++) {
+            images[j] = {
+                letter: splitWord[j],
+                url: `${base_url}${splitWord[j]}-libras.png`
+            }
         }
+        results.push(images)
     }
     res.status(201).send({
-        images
+        results
     })
 })
 
